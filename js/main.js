@@ -10,7 +10,6 @@ let dragging = false;
 let dragStartY = 0;
 let gestureFired = false;
 
-// Toggle popup menu
 function toggleMenu() {
   const menu = document.getElementById("popup-menu");
   const icon = document.getElementById("menu-icon");
@@ -19,20 +18,17 @@ function toggleMenu() {
   if (isActive) {
     menu.classList.remove("active");
     icon.textContent = "☰";
-    document.body.classList.remove("menu-open"); // remove class khi đóng
+    document.body.classList.remove("menu-open");
   } else {
     menu.classList.add("active");
     icon.textContent = "✕";
-    document.body.classList.add("menu-open"); //  add class khi mở
+    document.body.classList.add("menu-open");
   }
 }
 
-
-// Load section with slide animation
 function loadSection(sectionName, direction = "down") {
   const content = document.getElementById("content");
 
-  // Slide-out effect
   content.classList.add(direction === "down" ? "slide-out-up" : "slide-out-down");
 
   setTimeout(() => {
@@ -44,12 +40,9 @@ function loadSection(sectionName, direction = "down") {
       .then((data) => {
         content.innerHTML = data;
 
-        // Update currentIndex to ensure sync
         const index = sections.indexOf(sectionName);
         if (index !== -1) currentIndex = index;
 
-        // Container logic
-        // 👇 Thêm hoặc xóa class container tùy trang
         if (sectionName === "home" || sectionName === "projects") {
           content.classList.remove("container");
         } else {
@@ -61,14 +54,11 @@ function loadSection(sectionName, direction = "down") {
           sectionElement.classList.add("active");
         }
 
-        // Close popup menu if open
         const menu = document.getElementById("popup-menu");
         if (menu.classList.contains("active")) toggleMenu();
 
-        // Setup Explore More button
         setupExploreButton();
 
-        // Show/hide Explore More button
         const exploreBtn = document.getElementById("explore-btn");
         if (exploreBtn) {
           exploreBtn.style.display = sectionName === "contact" ? "none" : "flex";
@@ -99,7 +89,6 @@ function switchSectionBy(direction) {
   setTimeout(() => { isScrollingOrDragging = false; }, scrollCooldown);
 }
 
-// Scroll handling
 function handleScroll(e) {
   if (isScrollingOrDragging || Math.abs(e.deltaY) < scrollThreshold) return;
 
@@ -107,7 +96,6 @@ function handleScroll(e) {
   switchSectionBy(direction);
 }
 
-// Drag handling
 function onPointerDown(e) {
   if (isScrollingOrDragging) return;
   dragging = true;
@@ -130,7 +118,6 @@ function onPointerUpOrCancel() {
   gestureFired = false;
 }
 
-// Explore More button
 function setupExploreButton() {
   const exploreBtn = document.getElementById("explore-btn");
   if (exploreBtn) {
@@ -146,14 +133,35 @@ function setupExploreButton() {
   }
 }
 
-// Init
+function onTouchStart(e) {
+  if (isScrollingOrDragging) return;
+  dragging = true;
+  gestureFired = false;
+  dragStartY = (e.touches && e.touches[0]) ? e.touches[0].clientY : e.clientY;
+}
+
+function onTouchMove(e) {
+  if (!dragging || isScrollingOrDragging || gestureFired) return;
+  const y = (e.touches && e.touches[0]) ? e.touches[0].clientY : e.clientY;
+  const dy = y - dragStartY;
+  if (Math.abs(dy) >= dragThreshold) {
+    const direction = dy < 0 ? "down" : "up";
+    gestureFired = true;
+    try { e.preventDefault(); } catch (_) {}
+    switchSectionBy(direction);
+  }
+}
+
+function onTouchEndOrCancel() {
+  dragging = false;
+  gestureFired = false;
+}
+
 window.addEventListener("DOMContentLoaded", () => {
   loadSection(sections[currentIndex]);
 
   const toggleBtn = document.getElementById("menu-toggle");
-  if (toggleBtn) {
-    toggleBtn.addEventListener("click", toggleMenu);
-  }
+  if (toggleBtn) toggleBtn.addEventListener("click", toggleMenu);
 
   document.querySelectorAll("[data-section]").forEach((link) => {
     link.addEventListener("click", (e) => {
@@ -170,12 +178,18 @@ window.addEventListener("DOMContentLoaded", () => {
 
   const content = document.getElementById("content");
   if (content) {
-    content.addEventListener("pointerdown", onPointerDown);
-    content.addEventListener("pointermove", onPointerMove, { passive: true });
-    content.addEventListener("pointerup", onPointerUpOrCancel);
-    content.addEventListener("pointercancel", onPointerUpOrCancel);
-    content.addEventListener("pointerleave", onPointerUpOrCancel);
+    if (window.PointerEvent) {
+      content.addEventListener("pointerdown", onPointerDown);
+      content.addEventListener("pointermove", onPointerMove, { passive: true });
+      content.addEventListener("pointerup", onPointerUpOrCancel);
+      content.addEventListener("pointercancel", onPointerUpOrCancel);
+      content.addEventListener("pointerleave", onPointerUpOrCancel);
+    } else {
+      content.addEventListener("touchstart", onTouchStart, { passive: true });
+      content.addEventListener("touchmove", onTouchMove, { passive: false });
+      content.addEventListener("touchend", onTouchEndOrCancel);
+      content.addEventListener("touchcancel", onTouchEndOrCancel);
+    }
   }
 
-  window.addEventListener("wheel", handleScroll, { passive: true });
 });

@@ -9,7 +9,7 @@ const projects = [
     title: "Jewelry Shopping",
     image: "images/JewelryShopping.png",
     link: "https://github.com/ltdoanh2004/SE-project",
-    caption: "React + Node/Express + MySQL shop with AI recommendations, real-time chatbot, and 3D customization (MoMo/ZaloPay).",
+    caption: "React + Nodejs + MySQL shop with AI recommendations, real-time chatbot, 3D customization, and payment(MoMo/ZaloPay).",
   },
   {
     title: "Clash Royale Game",
@@ -41,11 +41,11 @@ let currentSlide = 0;
 
 function setTitleWithIndex(titleEl, idxZeroBased, titleText) {
   if (!titleEl) return;
-  titleEl.textContent = ""; // xoá nội dung cũ
+  titleEl.textContent = "";
 
   const numSpan = document.createElement("span");
   numSpan.className = "project-index";
-  numSpan.textContent = `${idxZeroBased + 1}. `; // bắt đầu từ 1
+  numSpan.textContent = `${idxZeroBased + 1}. `;
 
   titleEl.appendChild(numSpan);
   titleEl.appendChild(document.createTextNode(titleText));
@@ -57,25 +57,25 @@ function showSlide(index) {
   const projectLink   = document.getElementById("project-link");
   const projectCaption = document.getElementById("project-caption");
 
-  if (!projectImage || !projectTitle || !projectLink) return false; // DOM chưa sẵn sàng
+  if (!projectImage || !projectTitle || !projectLink) return false;
 
   const safeIndex = ((index % projects.length) + projects.length) % projects.length;
   const project = projects[safeIndex];
 
   projectImage.src = project.image;
   projectImage.alt = project.title;
-  projectImage.title = project.caption || project.title;   // tooltip
+  projectImage.title = project.caption || project.title;
   projectTitle.textContent = project.title;
-  projectLink.title = `${safeIndex + 1}. ${project.caption || project.title}`; // tooltip có số
+  projectLink.title = `${safeIndex + 1}. ${project.caption || project.title}`;
 
   projectLink.href = project.link;
-  projectLink.title = project.caption || project.title;    // tooltip cho link
+  projectLink.title = project.caption || project.title;
 
   setTitleWithIndex(projectTitle, safeIndex, project.title);
 
   if (projectCaption) {
     projectCaption.textContent = project.caption || "";
-    projectCaption.style.display = project.caption ? "" : "none"; // ẩn nếu không có chú thích
+    projectCaption.style.display = project.caption ? "" : "none";
   }
 
   currentSlide = safeIndex;
