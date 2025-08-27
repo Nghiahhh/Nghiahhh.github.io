@@ -13,7 +13,7 @@ const projects = [
   },
   {
     title: "Clash Royale Game",
-    image: "images/clash_royale-game.png",
+    image: "images/Clash_royale-game.png",
     link: "https://github.com/Nghiahhh/Clash_Royale-game",
     caption: "Clash Royale–style game with a WebSocket server and a multi-language stack (Go/TypeScript/Dart).",
   },
