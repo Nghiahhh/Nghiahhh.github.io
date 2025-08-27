@@ -1,49 +1,65 @@
-<!Doctype html>
-<html>
-     <head>
-          <title>MY PERSONAL WEBSITE</title>
-          <script src="https://kit.fontawesome.com/5680e690eb.js" crossorigin="anonymous"></script>
-          <link rel="icon" href="image/icon.png" type="image/png">
-          <link rel="stylesheet" href="style.css">
-          <meta charset="UTF-8">
-     </head>
-     <body>
-          <header>
-               <div>
-                    <i class="fa-sharp-duotone fa-solid fa-bolt"></i><a class="main_page" id="IN">Main</a>
-               </div>
-               <div>
-                    <table>
-                         <th><i class="fa-sharp-duotone fa-solid fa-house"></i><a href="Home.html" class="choose">Home</a></th>
-                         <th><i class="fa-sharp-duotone fa-solid fa-user"></i><a href="Friends.html" class="choose">Friends</a></th>
-                         <th><i class="fa-sharp-duotone fa-solid fa-image"></i><a href="Pictures.html" class="choose">Pictures</a></th>
-                         <th><i class="fa-sharp-duotone fa-solid fa-phone"></i><a href="About.html" class="choose">About</a></th>
-                    </table>
-               </div>
-          </header>
-          <main>
-               <div class="big_content">
-                    <h1>Main content</h1>
-               </div>
-               <div>
-                    <h2>Some key information about the website</h2>
-                    <ul>
-                         <li>I study in IU in HCM city</li>
-                         <li>I always want everything to achieve the best results</li>
-                         <li>I always strive to do better every day</li>
-                         <li>I like cats</li>
-                         <li>I will do everything to achieve the best results</li>
-                    </ul>
-               </div>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <meta charset="UTF-8" />
+    <title>Huynh Huu Nghia - Portfolio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic&display=swap" 
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="icon" type="image/png" href="icons/icon.png" />
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar-inner">
+        <h1 onclick="loadSection('home')">Nghia Huynh</h1>
+        <div class="menu-toggle-wrapper">
+          <div class="menu-toggle" onclick="toggleMenu()">
+            <span id="menu-icon">☰</span>
+          </div>
+        </div>
+      </div>
+    </nav>
 
+    <div id="popup-menu" class="popup-menu">
+      <div class="menu-wrapper">
+        <div class="menu-grid"> 
+          <button onclick="loadSection('home')">
+            <img src="icons/home-icon.png" alt="Home" />Home
+          </button>
+          <button onclick="loadSection('about')">
+            <img src="icons/about-icon.png" alt="About" />About
+          </button>
+          <button onclick="loadSection('skills')">
+            <img src="icons/skills-icon.png" alt="Skills" />Skills
+          </button>
+          <button onclick="loadSection('projects')">
+            <img src="icons/project-icon.png" alt="Projects" />Projects
+          </button>
+          <button onclick="loadSection('contact')">
+            <img src="icons/contact-icon.png" alt="Contact" />Contact
+          </button>
+        </div>
+      </div>
+    </div>
 
-          </main>
-          <footer>
-               <div>
-                    <p><a href="https://github.com/Nghiahhh">&copy;My Git</a></p>
-                    <p><a href="https://www.facebook.com/profile.php?id=100012455148334">&copy;My facebook</a></p>
-                    <p><a href="Index.html">&copy;Nghia profile</a></p>
-               </div>
-          </footer>
-     </body>
+    <!-- Dynamic content will load here -->
+    <div id="content"></div>
+
+    <!-- Explore More Button -->
+    <button id="explore-btn">↓ Roll or Click for More</button>
+
+    <!-- <footer class="main-footer">
+  <p>© 2025 Ha Tan Tai. Inspired by Chiikawa.</p>
+</footer> -->
+
+    <script src="js/main.js"></script>
+    <script src="js/project.js"></script>
+  </body>
 </html>
