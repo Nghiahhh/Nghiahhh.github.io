@@ -10,6 +10,8 @@ let dragging = false;
 let dragStartY = 0;
 let gestureFired = false;
 
+let wheelBuffer = 0;
+
 function toggleMenu() {
   const menu = document.getElementById("popup-menu");
   const icon = document.getElementById("menu-icon");
@@ -89,10 +91,23 @@ function switchSectionBy(direction) {
   setTimeout(() => { isScrollingOrDragging = false; }, scrollCooldown);
 }
 
-function handleScroll(e) {
-  if (isScrollingOrDragging || Math.abs(e.deltaY) < scrollThreshold) return;
+function getDeltaY(e) {
+  if ("deltaY" in e && typeof e.deltaY === "number") return e.deltaY;
+  if ("wheelDelta" in e && typeof e.wheelDelta === "number") return -e.wheelDelta; // đảo dấu cho cùng quy ước
+  if ("detail" in e && typeof e.detail === "number") return e.detail * 16;        // DOMMouseScroll
+  return 0;
+}
 
-  const direction = e.deltaY > 0 ? "down" : "up";
+function handleScroll(e) {
+  if (isScrollingOrDragging) return;
+
+  const deltaY = getDeltaY(e);
+  wheelBuffer += deltaY;
+
+  if (Math.abs(wheelBuffer) < scrollThreshold) return;
+
+  const direction = wheelBuffer > 0 ? "down" : "up";
+  wheelBuffer = 0;
   switchSectionBy(direction);
 }
 
@@ -118,6 +133,30 @@ function onPointerUpOrCancel() {
   gestureFired = false;
 }
 
+function onTouchStart(e) {
+  if (isScrollingOrDragging) return;
+  dragging = true;
+  gestureFired = false;
+  dragStartY = (e.touches && e.touches[0]) ? e.touches[0].clientY : e.clientY;
+}
+
+function onTouchMove(e) {
+  if (!dragging || isScrollingOrDragging || gestureFired) return;
+  const y = (e.touches && e.touches[0]) ? e.touches[0].clientY : e.clientY;
+  const dy = y - dragStartY;
+  if (Math.abs(dy) >= dragThreshold) {
+    const direction = dy < 0 ? "down" : "up";
+    gestureFired = true;
+    try { e.preventDefault(); } catch(_) {}
+    switchSectionBy(direction);
+  }
+}
+
+function onTouchEndOrCancel() {
+  dragging = false;
+  gestureFired = false;
+}
+
 function setupExploreButton() {
   const exploreBtn = document.getElementById("explore-btn");
   if (exploreBtn) {
@@ -133,30 +172,7 @@ function setupExploreButton() {
   }
 }
 
-function onTouchStart(e) {
-  if (isScrollingOrDragging) return;
-  dragging = true;
-  gestureFired = false;
-  dragStartY = (e.touches && e.touches[0]) ? e.touches[0].clientY : e.clientY;
-}
-
-function onTouchMove(e) {
-  if (!dragging || isScrollingOrDragging || gestureFired) return;
-  const y = (e.touches && e.touches[0]) ? e.touches[0].clientY : e.clientY;
-  const dy = y - dragStartY;
-  if (Math.abs(dy) >= dragThreshold) {
-    const direction = dy < 0 ? "down" : "up";
-    gestureFired = true;
-    try { e.preventDefault(); } catch (_) {}
-    switchSectionBy(direction);
-  }
-}
-
-function onTouchEndOrCancel() {
-  dragging = false;
-  gestureFired = false;
-}
-
+// --- Init ---
 window.addEventListener("DOMContentLoaded", () => {
   loadSection(sections[currentIndex]);
 
@@ -192,4 +208,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  window.addEventListener("wheel", handleScroll, { passive: true });
+  window.addEventListener("mousewheel", handleScroll, { passive: true });
+  window.addEventListener("DOMMouseScroll", handleScroll, { passive: true });
 });
